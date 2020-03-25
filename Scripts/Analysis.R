@@ -10,17 +10,6 @@ library(gridExtra)
 source("Scripts/Import_Data.R")
 
 
-View(EU_Data)
-
-#Setting up EU Data (currently brocken)
-l <- nrow(EU_Data)
-EU_Data_ts <- matrix(data = NA, nrow = l)
-dates <- seq(as.Date("2020-01-22"),length=l,by="days")
-EU_Data_ts$Date <- dates
-EU_Data_ts$Index <- xts(c(1:l), order.by = dates)
-EU_Data_ts$Germany <- xts(EU_Data$Germany_Germany, order.by = dates)
-EU_Data_ts$Austria <- xts(EU_Data$Austria_Austria, order.by = dates)
-
 #Setting up German Data---------------------------------------------------------------------------
 l <- nrow(WW_Data)
 dates <- seq(as.Date("2020-01-22"),length=l,by="days")
@@ -34,7 +23,6 @@ View(Germany_ts)
 tail(Germany_ts, 7)
 
 #Model Data
-
 phases <- c(4, 16, 14, 17, 7, 5)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
@@ -98,6 +86,7 @@ ggplot() +
   geom_line(aes(x = index(Germany_ts_3pModel$Data), y = log(Germany_ts_3pModel$Data))) +
   geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-01-27")), y = fitted(expMultiMod_germany)), col = c("red")) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
   labs(title = "Germany ln of confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 
 #Plot
@@ -105,6 +94,7 @@ ggplot() +
   geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data)) +
   geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-01-27")), y = exp(fitted(expMultiMod_germany))), col = c("red")) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 
 #logPlot after 2020-02-21
@@ -165,6 +155,8 @@ Germany_ts$p3 <- xts(c(rep(0, 5), rep(0, 15), rep(0, 14), rep(1, 22)), order.by 
 Germany_ts$Index1 <- xts(Germany_ts$Index * Germany_ts$p1, order.by = dates)
 Germany_ts$Index2 <- xts(Germany_ts$Index * Germany_ts$p2, order.by = dates)
 Germany_ts$Index3 <- xts(Germany_ts$Index * Germany_ts$p3, order.by = dates)
+
+
 # plot of data Austria
 
 ggplot() +
@@ -172,7 +164,4 @@ ggplot() +
 
 ggplot() +
   geom_line(aes(x = index(EU_Data_ts$Austria), y = log(EU_Data_ts$Austria)))
-
-
-
 
