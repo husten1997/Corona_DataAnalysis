@@ -62,13 +62,13 @@ expMod_germany <- lm(log(window(Germany_ts$Data, start = "2020-01-27")) ~ window
 summary(expMod_germany)
 
 ggplot() +
-  geom_line(aes(x = index(EU_Data_ts$Germany), y = EU_Data_ts$Germany)) +
-  geom_line(aes(x = index(window(EU_Data_ts$Germany, start = "2020-01-27")), y = exp(fitted(expMod_germany))), col = c("red")) +
+  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data)) +
+  geom_line(aes(x = index(window(Germany_ts$Data, start = "2020-01-27")), y = exp(fitted(expMod_germany))), col = c("red")) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days"))
 
 ggplot() +
-  geom_line(aes(x = index(EU_Data_ts$Germany), y = log(EU_Data_ts$Germany))) +
-  geom_line(aes(x = index(window(EU_Data_ts$Germany, start = "2020-01-27")), y = fitted(expMod_germany)), col = c("red")) +
+  geom_line(aes(x = index(Germany_ts$Data), y = log(Germany_ts$Data))) +
+  geom_line(aes(x = index(window(Germany_ts$Data, start = "2020-01-27")), y = fitted(expMod_germany)), col = c("red")) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days"))
 
 
@@ -124,7 +124,7 @@ p.dens <- density(expMultiMod_germany$residuals)$y
 p.dens.norm <- density(rnorm(mean = mean(expMultiMod_germany$residuals, na.rm = TRUE), sd = sd(expMultiMod_germany$residuals, na.rm = TRUE), n = length(expMultiMod_germany$residuals)))$y
 chisq.test(x = p.dens, p = p.dens.norm, rescale.p = TRUE)
 
-#Analysis of the last Week
+#Analysis of the last Week------------------------------------------------------------------------------------------
 lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
 lw_model_lin <- lm(Data ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
 
@@ -146,11 +146,20 @@ ggplot() +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 
 
-(s <- summary(lw_model))
-(growthFactor <- s$coefficients[2] + s$coefficients[10])
-exp(growthFactor)
-#verdopplungszeit
-(log(2) / growthFactor)
+
+
+growth.est <- data.frame(growthrate = rep(NA, 4), expGrowthrate = rep(NA, 4), doubletime = rep(NA, 4))
+for(i in c(0:3)){
+  lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-23")+i))
+  growth.est$growthrate[i+1] <- summary(lw_model_exp)$coefficients[2]
+  growth.est$expGrowthrate[i+1] <- exp(growth.est$growthrate[i+1])
+  growth.est$doubletime[i+1] <- log(2) / growth.est$growthrate[i+1]
+}
+
+plot(growth.est$expGrowthrate, type = "l")
+plot(growth.est$doubletime, type = "l")
+lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-26")-1))
+
 
 #Germany Forecast---------------------------------------------------------------------------
 lastDate <- c((as.Date(index(last(Germany_ts$Data)))+1))
@@ -192,7 +201,6 @@ Germany_ts$Index3 <- xts(Germany_ts$Index * Germany_ts$p3, order.by = dates)
 
 
 # plot of data Austria
-
 ggplot() +
   geom_line(aes(x = index(EU_Data_ts$Austria), y = EU_Data_ts$Austria))
 
