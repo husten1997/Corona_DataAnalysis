@@ -23,7 +23,7 @@ View(Germany_ts)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 6)
+phases <- c(4, 16, 14, 17, 7, 7)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -113,10 +113,44 @@ ggplot() +
   labs(title = "Residuals",  x = "Time", y = "Residuals")
 
 ggplot() +
-  geom_density(aes(x = exp(expMultiMod_germany$residuals)))
+  geom_density(aes(x = expMultiMod_germany$residuals)) +
+  geom_density(aes(x = rnorm(mean = mean(expMultiMod_germany$residuals, na.rm = TRUE), sd = sd(expMultiMod_germany$residuals, na.rm = TRUE), n = length(expMultiMod_germany$residuals))), col = "blue")
 
 ggplot() +
   geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data))
+
+#Testen der Verteilung auf NV
+p.dens <- density(expMultiMod_germany$residuals)$y
+p.dens.norm <- density(rnorm(mean = mean(expMultiMod_germany$residuals, na.rm = TRUE), sd = sd(expMultiMod_germany$residuals, na.rm = TRUE), n = length(expMultiMod_germany$residuals)))$y
+chisq.test(x = p.dens, p = p.dens.norm, rescale.p = TRUE)
+
+#Analysis of the last Week
+lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
+lw_model_lin <- lm(Data ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
+
+summary(lw_model_exp)
+summary(lw_model_lin)
+
+BIC(lw_model_exp)
+BIC(lw_model_lin)
+
+AIC(lw_model_exp)
+AIC(lw_model_lin)
+
+ggplot() +
+  geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data)) +
+  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-20")), y = exp(fitted(lw_model_exp))), col = c("red")) +
+  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-20")), y = fitted(lw_model_lin)), col = c("blue")) +
+  coord_cartesian(xlim = range(time(window(Germany_ts_3pModel$Data, start = c("2020-03-20"))))) +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
+
+
+(s <- summary(lw_model))
+(growthFactor <- s$coefficients[2] + s$coefficients[10])
+exp(growthFactor)
+#verdopplungszeit
+(log(2) / growthFactor)
 
 #Germany Forecast---------------------------------------------------------------------------
 lastDate <- c((as.Date(index(last(Germany_ts$Data)))+1))
