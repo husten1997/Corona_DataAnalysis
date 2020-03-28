@@ -156,7 +156,7 @@ for(i in c(0:4)){
   growth.est$doubletime[i+1] <- log(2) / growth.est$growthrate[i+1]
 }
 
-plot(growth.est$expGrowthrate, type = "l")
+plot(growth.est$expGrowthrate, type = "l", xlab = c("Days"), ylab = c("Growthrate"))
 plot(growth.est$doubletime, type = "l")
 lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-26")-1))
 
