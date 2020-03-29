@@ -16,7 +16,10 @@ dates <- seq(as.Date("2020-01-22"),length=l,by="days")
 
 Germany_ts <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts) <- c("Data")
+Germany_ts$Recov <- xts(WW_Data_Reco$Germany_Germany, order.by = dates)
 Germany_ts$Index <- xts(c(1:l), order.by = dates)
+
+
 
 #For checking if the last index is right
 View(Germany_ts)
@@ -44,6 +47,7 @@ Graphics <- list()
 
 Graphics$Germ_ConfCases <- ggplot() +
   geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data)) +
+  geom_line(aes(x = index(Germany_ts$Recov), y = Germany_ts$Recov), col = "blue") +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 Graphics$Germ_ConfCases
@@ -147,9 +151,9 @@ ggplot() +
 
 
 
-
-growth.est <- data.frame(growthrate = rep(NA, 5), expGrowthrate = rep(NA, 5), doubletime = rep(NA, 5))
-for(i in c(0:4)){
+l <- 6
+growth.est <- data.frame(growthrate = rep(NA, l), expGrowthrate = rep(NA, l), doubletime = rep(NA, l))
+for(i in c(0:(l-1))){
   lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-23")+i))
   growth.est$growthrate[i+1] <- summary(lw_model_exp)$coefficients[2]
   growth.est$expGrowthrate[i+1] <- exp(growth.est$growthrate[i+1])
@@ -187,8 +191,41 @@ ggplot() +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days")) +
   labs(title = "German confirmed Corona Cases", x = "Time", y = "Infected")
 
-#Fitting Gaus---------------------------------------------------------------------------
 
+#Recoverd Analysis----------------------------------------------------------------------
+
+recov_lag_model <- lm(window(Germany_ts$Data, end = "2020-03-08") ~ window(lag(Germany_ts$Recov, -10), end = "2020-03-08") + 
+                        window(lag(Germany_ts$Recov, -13), end = "2020-03-08") +
+                        window(lag(Germany_ts$Recov, -14), end = "2020-03-08") + 
+                        window(lag(Germany_ts$Recov, -15), end = "2020-03-08") + 
+                        window(lag(Germany_ts$Recov, -16), end = "2020-03-08") + 
+                        window(lag(Germany_ts$Recov, -18), end = "2020-03-08") + 
+                        window(lag(Germany_ts$Recov, -20), end = "2020-03-08"))
+summary(recov_lag_model)
+
+Germany_ts_RecovModel <- Germany_ts
+Germany_ts_RecovModel$Recov_l10 <- lag(Germany_ts$Recov, -15)
+cor(na.trim(Germany_ts_RecovModel)$Data,na.trim(Germany_ts_RecovModel)$Recov_l10)
+
+
+Graphics$Germ_ConfCases <- ggplot() +
+  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data)) +
+  geom_line(aes(x = index(Germany_ts$Recov), y = lag(Germany_ts$Recov, -12)), col = "blue") +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
+Graphics$Germ_ConfCases
+
+
+na.trim.ts(cbind(Germany_ts$Data, lag(Germany_ts$Recov, 20)))
+
+
+
+
+
+
+
+
+#Fitting Gaus---------------------------------------------------------------------------
 Germany_ts <- xts(EU_Data$Germany_Germany, order.by = dates)
 names(Germany_ts) <- c("Data")
 Germany_ts$Index <- xts(c(1:l), order.by = dates)
