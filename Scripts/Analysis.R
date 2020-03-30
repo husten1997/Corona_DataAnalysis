@@ -163,7 +163,7 @@ for(i in c(0:(l-1))){
 }
 
 plot(growth.est$expGrowthrate, type = "l", xlab = c("Days"), ylab = c("Growthrate"))
-plot(growth.est$doubletime, type = "l")
+plot(growth.est$doubletime, type = "l", xlab = c("Days"), ylab = c("Doubletime"))
 lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-26")-1))
 
 
