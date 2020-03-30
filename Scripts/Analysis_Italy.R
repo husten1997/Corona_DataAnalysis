@@ -25,7 +25,14 @@ tail(Italy_ts, 7)
 #Plots--------------------------------------------------------------------------------------------
 ggplot() +
   geom_line(aes(x = index(Italy_ts$Data), y = Italy_ts$Data)) +
-  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data), col = "blue") +
+  geom_line(aes(x = index(Germany_ts$Data), y = lag(Germany_ts$Data, 0)), col = "blue") +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
+  labs(title = "Italy confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
+
+ggplot() +
+  geom_line(aes(x = index(Italy_ts$Data), y = Italy_ts$Data)) +
+  geom_line(aes(x = index(Germany_ts$Data), y = lag(Germany_ts$Data, -7)), col = "blue") +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
   labs(title = "Italy confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
