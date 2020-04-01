@@ -22,11 +22,11 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 
 
 #For checking if the last index is right
-View(Germany_ts)
+#View(Germany_ts)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 11)
+phases <- c(4, 16, 14, 17, 7, 12)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -129,8 +129,8 @@ p.dens.norm <- density(rnorm(mean = mean(expMultiMod_germany$residuals, na.rm = 
 chisq.test(x = p.dens, p = p.dens.norm, rescale.p = TRUE)
 
 #Analysis of the last Week------------------------------------------------------------------------------------------
-lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
-lw_model_lin <- lm(Data ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20"))
+lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-21"))
+lw_model_lin <- lm(Data ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-21"))
 
 summary(lw_model_exp)
 summary(lw_model_lin)
@@ -143,9 +143,9 @@ AIC(lw_model_lin)
 
 ggplot() +
   geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data, color = "1")) +
-  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-20")), y = exp(fitted(lw_model_exp)), color = "2")) +
-  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-20")), y = fitted(lw_model_lin), color = "3")) +
-  coord_cartesian(xlim = range(time(window(Germany_ts_3pModel$Data, start = c("2020-03-20"))))) +
+  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-21")), y = exp(fitted(lw_model_exp)), color = "2")) +
+  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-03-21")), y = fitted(lw_model_lin), color = "3")) +
+  coord_cartesian(xlim = range(time(window(Germany_ts_3pModel$Data, start = c("2020-03-21"))))) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases") +
   scale_color_manual(limits = c("1", "2", "3"), values = c("black", "red", "orange"), labels = c("Data", "Exp Model", "Lin Model"), name = "") +
@@ -153,7 +153,7 @@ ggplot() +
 
 
 
-l <- 8
+l <- 9
 growth.est <- data.frame(growthrate = rep(NA, l), expGrowthrate = rep(NA, l), doubletime = rep(NA, l))
 for(i in c(0:(l-1))){
   lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-23")+i))
