@@ -26,20 +26,22 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 14)
+phases <- c(4, 16, 14, 17, 7, 8, 7)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
-Germany_ts_3pModel$p1 <- xts(c(rep(0, phases[1]), rep(1, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(0, phases[6])), order.by = dates)
-Germany_ts_3pModel$p2 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(1, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(0, phases[6])), order.by = dates)
-Germany_ts_3pModel$p3 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(1, phases[4]), rep(0, phases[5]), rep(0, phases[6])), order.by = dates)
-Germany_ts_3pModel$p4 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(1, phases[5]), rep(0, phases[6])), order.by = dates)
-Germany_ts_3pModel$p5 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(1, phases[6])), order.by = dates)
+Germany_ts_3pModel$p1 <- xts(c(rep(0, phases[1]), rep(1, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(0, phases[6]), rep(0, phases[7])), order.by = dates)
+Germany_ts_3pModel$p2 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(1, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(0, phases[6]), rep(0, phases[7])), order.by = dates)
+Germany_ts_3pModel$p3 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(1, phases[4]), rep(0, phases[5]), rep(0, phases[6]), rep(0, phases[7])), order.by = dates)
+Germany_ts_3pModel$p4 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(1, phases[5]), rep(0, phases[6]), rep(0, phases[7])), order.by = dates)
+Germany_ts_3pModel$p5 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(1, phases[6]), rep(0, phases[7])), order.by = dates)
+Germany_ts_3pModel$p6 <- xts(c(rep(0, phases[1]), rep(0, phases[2]), rep(0, phases[3]), rep(0, phases[4]), rep(0, phases[5]), rep(0, phases[6]), rep(1, phases[7])), order.by = dates)
 Germany_ts_3pModel$Index1 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p1, order.by = dates)
 Germany_ts_3pModel$Index2 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p2, order.by = dates)
 Germany_ts_3pModel$Index3 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p3, order.by = dates)
 Germany_ts_3pModel$Index4 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p4, order.by = dates)
 Germany_ts_3pModel$Index5 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p5, order.by = dates)
+Germany_ts_3pModel$Index6 <- xts(Germany_ts_3pModel$Index * Germany_ts_3pModel$p6, order.by = dates)
 
 # plot of data Germany---------------------------------------------------------------------------
 
@@ -77,10 +79,10 @@ ggplot() +
 
 
 #Multi Model---------------------------------------------------------------------------
-expMultiMod_germany <- lm(log(Data) ~ Index + p2 + Index2 + p3 + Index3 +p4 + Index4 + p5 + Index5, data = window(Germany_ts_3pModel, start = "2020-01-27"))
+expMultiMod_germany <- lm(log(Data) ~ Index + p2 + Index2 + p3 + Index3 +p4 + Index4 + p5 + Index5 + p6 + Index6, data = window(Germany_ts_3pModel, start = "2020-01-27"))
 
 (s <- summary(expMultiMod_germany))
-(growthFactor <- s$coefficients[2] + s$coefficients[10])
+(growthFactor <- s$coefficients[2] + s$coefficients[12])
 exp(growthFactor)
 #verdopplungszeit
 (log(2) / growthFactor)
