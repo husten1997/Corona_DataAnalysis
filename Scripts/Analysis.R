@@ -26,7 +26,7 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 9)
+phases <- c(4, 16, 14, 17, 7, 8, 10)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
