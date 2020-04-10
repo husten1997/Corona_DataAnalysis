@@ -26,7 +26,7 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 10)
+phases <- c(4, 16, 14, 17, 7, 8, 13)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -155,10 +155,10 @@ ggplot() +
 
 
 
-l <- 12
+l <- 15
 growth.est <- data.frame(growthrate = rep(NA, l), expGrowthrate = rep(NA, l), doubletime = rep(NA, l))
 for(i in c(0:(l-1))){
-  lw_model_exp <- lm(log(Data) ~ Index5, data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-23")+i))
+  lw_model_exp <- lm(log(Data) ~ (Index5 + Index6), data = window(Germany_ts_3pModel, start = "2020-03-20", end = as.Date("2020-03-23")+i))
   growth.est$growthrate[i+1] <- summary(lw_model_exp)$coefficients[2]
   growth.est$expGrowthrate[i+1] <- exp(growth.est$growthrate[i+1])
   growth.est$doubletime[i+1] <- log(2) / growth.est$growthrate[i+1]
