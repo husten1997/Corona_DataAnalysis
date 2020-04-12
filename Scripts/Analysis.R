@@ -26,7 +26,7 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 13)
+phases <- c(4, 16, 14, 17, 7, 8, 14)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -79,7 +79,7 @@ ggplot() +
 
 
 #Multi Model---------------------------------------------------------------------------
-expMultiMod_germany <- lm(log(Data) ~ Index + p2 + Index2 + p3 + Index3 +p4 + Index4 + p5 + Index5 + p6 + Index6, data = window(Germany_ts_3pModel, start = "2020-01-27"))
+expMultiMod_germany <- lm(log(Data) ~ Index + p2 + Index2 + p3 + Index3 + p4 + Index4 + p5 + Index5 + p6 + Index6, data = window(Germany_ts_3pModel, start = "2020-01-27"))
 
 (s <- summary(expMultiMod_germany))
 (growthFactor <- s$coefficients[2] + s$coefficients[12])
@@ -96,12 +96,12 @@ ggplot() +
   labs(title = "Germany ln of confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 
 #Plot
-ggplot() +
-  geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data)) +
-  geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-01-27")), y = exp(fitted(expMultiMod_germany))), col = c("red")) +
-  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
-  scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
-  labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
+  ggplot() +
+    geom_line(aes(x = index(Germany_ts_3pModel$Data), y = Germany_ts_3pModel$Data)) +
+    geom_line(aes(x = index(window(Germany_ts_3pModel$Data, start = "2020-01-27")), y = exp(fitted(expMultiMod_germany))), col = c("red")) +
+    scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+    scale_y_continuous(labels = function(x) format(x,big.mark = ",", scientific = FALSE)) +
+    labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 
 #logPlot after 2020-02-21
 ggplot() +
