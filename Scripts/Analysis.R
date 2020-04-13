@@ -17,6 +17,7 @@ dates <- seq(as.Date("2020-01-22"),length=l,by="days")
 Germany_ts <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts) <- c("Data")
 Germany_ts$Recov <- xts(WW_Data_Reco$Germany_Germany, order.by = dates)
+Germany_ts$ConvCases <- Germany_ts$Data - Germany_ts$Recov
 Germany_ts$Index <- xts(c(1:l), order.by = dates)
 
 
@@ -26,7 +27,7 @@ Germany_ts$Index <- xts(c(1:l), order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 15)
+phases <- c(4, 16, 14, 17, 7, 8, 16)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -50,12 +51,19 @@ Graphics <- list()
 Graphics$Germ_ConfCases <- ggplot() +
   geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data)) +
   geom_line(aes(x = index(Germany_ts$Recov), y = Germany_ts$Recov), col = "blue") +
+  geom_line(aes(x = index(Germany_ts$ConvCases), y = Germany_ts$ConvCases), col = "red") +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 Graphics$Germ_ConfCases
 
 Graphics$Germ_lnConfCases <- ggplot() +
   geom_line(aes(x = index(Germany_ts$Data), y = log(Germany_ts$Data))) +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany ln of confirmed Corona cases",  x = "Time", y = "ln(Confirmed Cases)")
+Graphics$Germ_lnConfCases
+
+Graphics$Germ_lnConfCases <- ggplot() +
+  geom_line(aes(x = index(Germany_ts$ConvCases), y = log(Germany_ts$ConvCases))) +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   labs(title = "Germany ln of confirmed Corona cases",  x = "Time", y = "ln(Confirmed Cases)")
 Graphics$Germ_lnConfCases
