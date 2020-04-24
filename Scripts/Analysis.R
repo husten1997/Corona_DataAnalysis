@@ -20,7 +20,10 @@ Germany_ts$Recov <- xts(WW_Data_Reco$Germany_Germany, order.by = dates)
 Germany_ts$ConvCases <- Germany_ts$Data - Germany_ts$Recov
 Germany_ts$Index <- xts(c(1:l), order.by = dates)
 Germany_ts$Deaths <- xts(WW_Data_Deaths$Germany_Germany, order.by = dates)
-
+Germany_ts$dConvCases <- Germany_ts$ConvCases - lag(Germany_ts$ConvCases, 1)
+Germany_ts$dRecov <- Germany_ts$Recov - lag(Germany_ts$Recov, 1)
+Germany_ts$dDeaths <- Germany_ts$Deaths - lag(Germany_ts$Deaths, 1)
+Germany_ts$dData <- Germany_ts$Data - lag(Germany_ts$Data, 1)
 
 
 #For checking if the last index is right
@@ -28,7 +31,7 @@ Germany_ts$Deaths <- xts(WW_Data_Deaths$Germany_Germany, order.by = dates)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 23)
+phases <- c(4, 16, 14, 17, 7, 8, 27)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
@@ -57,6 +60,24 @@ Graphics$Germ_ConfCases <- ggplot() +
   scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
   labs(title = "Germany confirmed Corona cases",  x = "Time", y = "Confirmed Cases")
 Graphics$Germ_ConfCases
+
+ggplot() +
+  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$ConvCases), col = "orange") +
+  geom_line(aes(x = index(Germany_ts$Recov), y = Germany_ts$dConvCases), col = "blue") +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany change of conformed Corona cases",  x = "Time", y = "dConfirmed Cases")
+
+ggplot() +
+  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Recov), col = "orange") +
+  geom_line(aes(x = index(Germany_ts$Recov), y = Germany_ts$dRecov), col = "blue") +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany change of conformed Corona cases",  x = "Time", y = "dConfirmed Cases")
+
+ggplot() +
+  geom_line(aes(x = index(Germany_ts$Data), y = Germany_ts$Data), col = "orange") +
+  geom_line(aes(x = index(Germany_ts$Recov), y = Germany_ts$dData), col = "blue") +
+  scale_x_date(minor_breaks = function(x) seq.Date(from = min(x), to = max(x), by = "days"), breaks = function(x) seq.Date(from = min(x), to = max(x), by = "14 days")) +
+  labs(title = "Germany change of conformed Corona cases",  x = "Time", y = "dConfirmed Cases")
 
 Graphics$Germ_lnConfCases <- ggplot() +
   geom_line(aes(x = index(Germany_ts$Data), y = log(Germany_ts$Data))) +
