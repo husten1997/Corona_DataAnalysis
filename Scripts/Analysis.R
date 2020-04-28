@@ -31,7 +31,7 @@ Germany_ts$dData <- Germany_ts$Data - lag(Germany_ts$Data, 1)
 tail(Germany_ts, 7)
 
 #Model Data
-phases <- c(4, 16, 14, 17, 7, 8, 27)
+phases <- c(4, 16, 14, 17, 7, 8, 31)
 Germany_ts_3pModel <- xts(WW_Data$Germany_Germany, order.by = dates)
 names(Germany_ts_3pModel) <- c("Data")
 Germany_ts_3pModel$Index <- xts(c(1:l), order.by = dates)
